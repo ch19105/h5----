@@ -1,0 +1,155 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    width: 750px;
+    /* height: 1100px; */
+    /* background: #FFFFFF!important; */
+}
+.box {
+    height: 1300px;
+    background: rgba(255,255,255,1)!important;
+}
+.top {
+    position: fixed;
+    width: 750px;
+    height: 85px;
+    line-height: 85px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: #FF7978;
+}
+.top > img:first-child {
+   width: 30px;
+   height: 30px;
+   margin-left: 30px;
+}
+.zhuti {
+    width: 100%;
+    height: 901px;;
+    margin: 0 auto;
+    padding-top: 85px;
+    background: url('../img/bg.png') no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.share {
+    width: 100%;
+    height: 1052px;
+    background: url('../img/xrr_bg.png') no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    /* align-items: flex-start; */
+    flex-wrap: wrap;
+}
+.share >img:nth-child(1) {
+    width: 442px;
+    height: 203px;
+    margin-top: 94px;
+}
+.share >img:nth-child(2) {
+    width: 600px;
+    height: 333px;
+    margin-top: -20px;
+    margin-bottom: 48px;
+}
+.rules {
+    border-radius:8px;
+   text-align: center;
+}
+.rules > input {
+    display: block;
+    width:584px;
+    height:38px;
+    background:rgba(241,241,241,1);
+    border-radius:12px;
+    margin-bottom: 29px;
+    border:1px solid #F1F1F1;
+    padding: 30px 0 30px 34px;
+    font-size:28px;
+    font-family:PingFang-SC-Medium;
+    font-weight:500;
+    color:rgba(136,136,136,1);
+    letter-spacing:1px;
+
+    outline: none;
+    -webkit-appearance: none; /*去除系统默认的样式*/
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 点击高亮的颜色*/
+}
+.rules input::-webkit-input-placeholder{
+    font-size:28px;
+    font-family:PingFang-SC-Medium;
+    font-weight:500;
+    color:rgba(136,136,136,1);
+    letter-spacing:1px;
+}
+.rules >div {
+    display: flex;
+    /* justify-content: flex-start; */
+}
+.rules >div > input {
+    width: 328px;;
+    height:38px;
+    background:rgba(241,241,241,1);
+    border-radius:12px;
+    border:1px solid #F1F1F1;
+    padding: 30px 0 30px 34px;
+    font-size:28px;
+    font-family:PingFang-SC-Medium;
+    font-weight:500;
+    color:rgba(136,136,136,1);
+    letter-spacing:1px; 
+    outline: none;
+    -webkit-appearance: none; /*去除系统默认的样式*/
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 点击高亮的颜色*/
+
+}
+
+.rules >div > div {
+    margin-left: 26px;
+    width:230px;
+    height:100px;
+    line-height: 100px;
+    text-align: center;
+    background:rgba(255,90,90,1);
+    border-radius:8px;
+    font-size:28px;
+    font-family:PingFang-SC-Medium;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    letter-spacing:1px;
+}
+.share> span:last-child {
+    font-size:24px;
+    font-family:PingFang-SC-Medium;
+    font-weight:500;
+    color:rgba(136,136,136,1);
+    line-height:33px;
+    margin-top: 54px;
+    margin-bottom: 61px;
+}
+.shareBtn {
+    width:690px;
+    height:100px;
+    line-height: 100px;
+    text-align: center;
+    background:rgba(255,90,90,1);
+    border-radius:50px;
+    margin: 0 auto;
+    margin-top: 22px;
+    margin-bottom: 20px;
+}
+.shareBtn >span {
+    font-size:36px;
+    font-family:PingFang-SC-Medium;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+}

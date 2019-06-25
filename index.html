@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <link rel="stylesheet" href="./css/index.css">
+    <title>邀请有礼</title>
+    <script>
+        (function() {
+            var timer;
+            changeFixedW();
+
+            function changeFixedW() {
+                var width = window.screen.width;
+                var fixedW = 750;
+                var scale = width / fixedW;
+                var meta = document.createElement('meta');
+                meta.setAttribute('name', 'viewport');
+                meta.setAttribute('content', 'width=' + fixedW + ',initial-scale=' + scale + ',maximum-scale=' + scale + ',user-scalable=no');
+                document.head.appendChild(meta);
+            }
+            window.addEventListener('resize', function() {
+                clearTimeout(timer);
+                timer = setTimeout(changeFixedW, 300);
+            }, false);
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) {
+                    clearTimeout(timer);
+                    timer = setTimeout(changeFixedW, 300);
+                }
+            }, false);
+        })();
+    </script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script type="text/javascript">
+
+        function isAndroid_ios(){
+            let u = navigator.userAgent;
+            let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+            let isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+            if (isAndroid) {
+                return true;
+            } else if (isIOS) {
+                return false;
+            }
+        }
+        function onReturns(String) {
+            if(isAndroid_ios()) {
+                javascript: local_obj.onReturn(String); //调用app的返回功能 传一个string
+            }else {
+                window.webkit.messageHandlers.goback.postMessage(null);  //ios
+            }
+           
+        }
+    </script>
+</head>
+
+<body>
+    <div class="box">
+        <!-- <div class="top">
+            <img id="back" class="b1" src="./img/gb.png" alt="" onClick="onReturns('返回')" style="display:block">
+        </div> -->
+        <div class="zhuti">
+            <div class="share">
+                <img src="./img/bt.png" alt="">
+                <img src="./img/liw.png" alt="">
+                <div class="rules">
+                    <input type="number" style="outline:none" v-model="phone" placeholder="请输入手机号">
+                    <div>
+                        <input type="text" style="outline:none" v-model="yaCode" placeholder="请输入验证码">
+                        <div v-if="countFlag == false" @click="getCode">获取验证码</div>
+                        <div v-if="countFlag == true" >重新获取({{countNum}}s)</div>
+                    </div>
+                </div>
+                <span>—— 优质生活，首选乐家 ——</span>
+            </div>
+            <div class="shareBtn" @click="toDownload">
+                    <span>接受并下载APP</span>
+                </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    new Vue({
+        el: '.box',
+        data: {
+            phone:'',
+            yaCode:'',
+             // 倒计时周期
+            countNum:60,
+            // 用于倒计时标记，true-正在倒计时
+            countFlag:false,
+        },
+        methods: {
+            //倒计时方法
+            countDown() {
+                // 更改btn状态
+                this.countFlag =! this.countFlag;
+                let timer = setInterval(() => {
+                    if(this.countNum <= 0) {
+                        this.countFlag = !this.countFlag;
+                        clearInterval(timer);
+                         // 重置倒计时状态
+                         this.countNum = 61;
+                    }
+                    // 倒计时
+                    this.countNum -- ;
+                },1000);
+            },
+            getCode(){
+                const self = this;
+                axios.get("http://139.196.101.133:8101/api/login/zc_code", {
+                    params: {
+                        phone: self.phone,
+                    }
+                })
+                .then(function(res) {
+                    if (res.data.code == 200) {
+                        self.yaCode = res.data.content;
+                        self.countDown();
+                        console.log(self.yaCode); 
+                    }
+                });
+            },
+            toDownload() {
+                //jiaoyan
+                function GetQueryString(name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r != null) return unescape(r[2]);
+                    return null;
+                }
+                //服务详情
+                const self = this;
+                let userhome_id = GetQueryString("userhome_id");
+                axios.get("http://139.196.101.133:8101/api/login/yaoqing", {
+                    params: {
+                        phone: self.phone,
+                        code:self.yaCode,
+                        userhome_id:userhome_id,
+                    }
+                })
+                .then(function(res) {
+                    if (res.data.code == 200) {
+                        if(isAndroid_ios()) {
+                            window.location.href = "https://www.weibo.com/";
+                        }else {
+                            window.location.href = "https://www.baidu.com/";
+                        }
+                    }
+                });
+
+            
+            }
+        },
+        mounted() {
+               
+
+        }
+
+    })
+</script>
+
+</html>
