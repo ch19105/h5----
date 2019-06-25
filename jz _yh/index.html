@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="./js/jquery.raty.min.js"></script> -->
+    <link rel="stylesheet" href="./css/index.css">
+    </script>
+    <title>服务详情</title>
+    <script>
+        (function() {
+            var timer;
+            changeFixedW();
+
+            function changeFixedW() {
+                var width = window.screen.width;
+                var fixedW = 750;
+                var scale = width / fixedW;
+                var meta = document.createElement('meta');
+                meta.setAttribute('name', 'viewport');
+                meta.setAttribute('content', 'width=' + fixedW + ',initial-scale=' + scale + ',maximum-scale=' + scale + ',user-scalable=no');
+                document.head.appendChild(meta);
+            }
+            window.addEventListener('resize', function() {
+                clearTimeout(timer);
+                timer = setTimeout(changeFixedW, 300);
+            }, false);
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) {
+                    clearTimeout(timer);
+                    timer = setTimeout(changeFixedW, 300);
+                }
+            }, false);
+        })();
+    </script>
+    <script src="js/vue.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <!-- <script src="js/bridge.js"></script> -->
+    <script type="text/javascript">
+
+       function isAndroid_ios(){   //区别iOS and
+            let u = navigator.userAgent;
+            let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+            let isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+            if (isAndroid) {
+                return true;
+            } else if (isIOS) {
+                return false;
+            }
+        }
+        function goback(String) {
+            if(isAndroid_ios()) {
+                javascript: local_obj.goback(String);  //and
+            }else {
+                window.webkit.messageHandlers.goback.postMessage(null);  //ios
+            }
+        };  
+        function toShop(Number) {
+            if(isAndroid_ios()) {
+                javascript: local_obj.toShop(Number); //查看店铺  参数 电铺 id
+            }else {
+                window.webkit.messageHandlers.toShop.postMessage(null);  //ios
+            }
+        };
+        // function toSertime(String) {
+        //     javascript: local_obj.toSertime(String); //服务时间  参数 时间string
+        // };
+        function toRules(Number) {
+            if(isAndroid_ios()) {
+                javascript: local_obj.toRules(Number); //查看规则  
+            }else {
+                window.webkit.messageHandlers.toRules.postMessage(null);  //ios
+            }
+        };  
+        function getTime(val) {
+            // alert(val);
+           $('#time').html(val);  //and时间回传调用方法
+        };  
+
+        function getSertime(val) {
+            // alert(val);
+           $('#time').html(val); //ios时间回传调用方法
+        };  
+
+    </script>
+</head>
+
+<body>
+    <div class="box">
+        <div class="top">
+            <img id="back" class="b1" src="./img/back.png" alt="" onClick="goback('返回')"  style="display:block">
+            <img id="back" class="b2" src="./img/back1.png" alt="" onClick="goback('返回')"  style="display:none">
+            <div style="display:none" id="title" class="tops">
+                <div id="a11"> <a class="miao" href="#a1">服务</a></div>
+                <div id="a22"> <a class="miao" href="#a2">详情</a></div>
+                <div id="a33"><a class="miao" href="#a3">评价</a></div>
+            </div>
+            <img @click="isCollect" id="shou" class="sc" :src="data.is_collect == 0?Nocollect:collect" 
+             >
+            <!-- :src="items.is_collect=='1' ?collect:Nocollect>index?stara:starb" -->
+        </div>
+        <header>
+            <a id="a1"></a>
+            <div class="serType">
+               
+                <img :src="data.image" alt="" id="xqImg">
+
+                <span class="type">{{data.name}}</span>
+                <div class="price">
+                    <span><span class="bold">{{data.price}}</span>元/{{data.serviceunit_name}}</span>
+                    <span>已售{{data.sales}}</span>
+                </div>
+            </div>
+            <div class="serTime">
+                <span>服务时间</span>
+                <!-- onClick="toSertime()"  @click.stop="toSerTime()" -->
+                <div class="xtime" @click="toSertime()" >
+                    <span id="time">明天{{time}}</span>
+                    <img src="./img/yjt.png" alt="">
+                </div>
+            </div>
+            <div class="serShop">
+                <div>
+                    <div class="serShop_top">
+                        <img :src="data.logo" alt="">
+                        <div class="serShopName">
+                            <span>{{data.storename}}</span>
+                            <div class="starXin1" v-for="(item,index) in list" :key='index'>
+                                <img :src="data.star_avg>index?stara:starb" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="toshop" onClick="toShop()">
+                        <span>进店看看</span>
+                        <img src="./img/xyjt.png" alt="">
+                    </div>
+                </div>
+                <div class="appraise">
+                    <div>
+                        <span>{{data.service_count}}</span><span>全部服务</span>
+                    </div>
+                    <div>
+                        <span>{{data.service_order_count}}</span><span>服务次数</span>
+                    </div>
+                    <div>
+                        <span>{{data.evaluate_count}}</span><span>评价</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="orderNotice">
+                <div>
+                    <span>下单须知</span>
+                    <div class="order_rule" onClick="toRules()">
+                        <span>取消、退款、赔付规则</span>
+                        <img src="./img/xyjt.png" alt="">
+                    </div>
+                </div>
+                <div>
+                    <span>{{data.notice_data}}</span>
+                    <!-- <span>1.商家将在您下单后30分钟内确认接单;</span> -->
+                    <!-- <span>2.商家将在您下单后30分钟内确认接单;</span>
+                        <span>3.商家商家将在您下单后30分钟内确认接单将在您下单后30分钟内确认接单;</span> -->
+                </div>
+            </div>
+        </header>
+        <nav id='xq'>
+            <a id="a2"></a>
+            <!-- <img src="./img/xq.png" alt=""> -->
+            <img v-for="(item,index) in image" :key='index' :src="item.image" alt="">
+            <!-- <img src="data.detailimage" alt=""> -->
+        </nav>
+
+        <div class="pj">
+            <a id="a3"></a>
+            <span>综合评价({{items.evaluate_count}})：</span>
+            <div class="xing" v-for="(item,index) in list" :key='index'>
+                <div><img :src="items.star_avg>index?stara:starb" /></div>
+            </div>
+        </div>
+        <div class="pjDetail" v-for="(items, index) in content" :key="index">
+            <div class="pj_top">
+                <img :src="items.user_avatar" alt="">
+                <div class="pj_top_title">
+                    <span>{{items.service_name}}</span>
+                    <div class="pj_top_time">
+                        <div class="starXin" v-for="(item,index) in list" :key='index'>
+                            <div><img :src="items.star>index?stara:starb" /></div>
+                        </div>
+                        <span>{{items.createtime}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pj_label">
+                <div v-for="(item, index) in (items.evaluatelabel_list)" :key="index"><span>{{item.name}}</span></div>
+                <!-- <div><span>准时到达</span></div>
+                        <div><span>准时到达</span></div>  -->
+            </div>
+            <div class="pj_msg">
+                <span v-if="items.message">{{items.message}}</span>
+                <ul v-if="items.image">
+                    <li v-for="(item, index) in (items.image)" :key="index">
+                        <img :src="item" alt=""></li>
+                </ul>
+                <span>#{{items.service_name}}#</span>
+            </div>
+           
+        </div>
+    </div>
+
+</body>
+
+<script>
+    $(window).scroll(function() {
+        //为页面添加页面滚动监听事件
+        var wst = $(window).scrollTop() //滚动条距离顶端值
+        var xqt = $('#xq').offset().top - 44;
+        var pjt = $('.pj').offset().top - 44;
+        if ($(window).scrollTop() >= xqt) {
+            $("#a22").addClass("c").siblings().removeClass("c"); //给当前导航加c类
+        }
+        if ($(window).scrollTop() >= pjt) {
+            $("#a33").addClass("c").siblings().removeClass("c"); //给当前导航加c类
+        }
+    })
+
+//入口函数
+    $(function(){
+        
+    });
+
+    // 星星打分
+    // $(function() {
+    //     $(".star").raty({
+    //         score: function() {
+    //             return $(this).attr("data-num");
+    //         },
+    //         starOn: './img/star-on-big.png',
+    //         starOff: './img/star-off-big.png',
+    //         // starHalf: 'resources/img/star-half-big.png',
+    //         readOnly: false,
+    //         halfShow: true,
+    //         size: 34,
+    //     })
+    // });
+</script>
+<script>
+    new Vue({
+        el: '.box',
+        data: {
+            items: {
+            //     code: 200,
+            //     mse: "成功",
+            },
+            src: '',
+            data: {},
+            content: [],
+            evaluatelabel_list: [],
+            list: [0, 1, 2, 3, 4],
+            stara: './img/star-on-big.png', //亮星星
+            starb: './img/star-off-big.png', //暗星星
+            collect: './img/hxx.png', //红
+            Nocollect: './img/hx.png', //灰
+            is_collect:'',
+            servicetime:'',
+            time:'',
+            image: [],
+        },
+        methods: {
+            //收藏
+            isCollect() {
+                function GetQueryString(name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r != null) return unescape(r[2]);
+                    return null;
+                }
+                //服务详情
+                const self = this;
+                let service_id = GetQueryString("service_id");
+                let uid = GetQueryString("uid");
+                
+                if(!uid) {
+                    if(isAndroid_ios()) {
+                        javascript: local_obj.toLogin(); 
+                    }else {
+                        window.webkit.messageHandlers.toLogin.postMessage();  //ios
+                    }
+                } else {
+                    if(self.data.is_collect == 0) {
+                        self.data.is_collect = 1
+                    }else if(self.data.is_collect == 1) {
+                        self.data.is_collect = 0;
+                    }
+                    let type = self.data.is_collect;
+
+                    if ($(window).scrollTop() >= 375) {
+                        self.collect = './img/xhxx.png'
+                        self.Nocollect = './img/xhx.png'
+                    } else if ($(window).scrollTop() < 300) {
+                        self.collect = './img/hxx.png'
+                        self.Nocollect = './img/hx.png'
+                    }
+
+                    axios.get("http://139.196.101.133:8101/api/search/collect", {
+                        params: {
+                            id	: service_id,
+                            uid: uid,
+                            type: type,
+                            cate: 1,
+                        }
+                    })
+                    .then(function(res) {
+                        console.log(res);
+                    })
+                    .catch(function(err) {
+                    });
+                }
+              
+            },
+
+
+            toSertime () {
+            //  function toSertime(String) {
+                if(isAndroid_ios()) {
+                    javascript: local_obj.toSertime(this.servicetime); 
+                }else {
+                    window.webkit.messageHandlers.toSertime.postMessage(this.servicetime);  //ios
+                }
+                    // javascript: local_obj.toSertime(this.servicetime); 
+                // };
+                // this.getTime(100)
+                // getTime("100");
+            },
+        },
+
+        mounted() {
+            
+            function GetQueryString(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]);
+                return null;
+            }
+            //服务详情
+            const self = this;
+            let service_id = GetQueryString("service_id");
+            let uid = GetQueryString("uid");
+            axios.get("http://139.196.101.133:8101/api/search/service_detail", {
+                    params: {
+                        // g: "ApiHome",
+                        // m: "circle",
+                        // a: "circle_detail",
+                        service_id: service_id,
+                        uid: uid,
+                    }
+                })
+                .then(function(res) {
+                    if (res.data.code == 200) {
+                        self.data = res.data.content;
+                        self.servicetime = res.data.content.servicetime;
+                        self.time = res.data.content.servicetime.split(',')[0];
+                        self.image = res.data.detailimage;
+                        console.log(self.data.is_collect + '原始');
+                        console.log(self.data + '原始');
+                        $(window).scroll(function() {
+                            if ($(window).scrollTop() >= 375) {
+                                if(self.data.is_collect == 0) {
+                                    $('.sc').attr('src','./img/xhx.png').css({'width':'40px','height':'38px','margin-right': '40px'});
+                                }else if (self.data.is_collect == 1) {
+                                    $('.sc').attr('src','./img/xhxx.png').css({'width':'40px','height':'38px','margin-right': '40px'});
+                                    // console.log(111)
+                                }
+                            } else if ($(window).scrollTop() < 300) {
+                                if(self.data.is_collect == 0) {
+                                    $('.sc').attr('src','./img/hx.png').css({'width':'60px','height':'60px','margin-right': '30px'});
+                                }else if (self.data.is_collect == 1) {
+                                    $('.sc').attr('src','./img/hxx.png').css({'width':'60px','height':'60px','margin-right': '30px'});
+    
+                                }
+                            }
+                        });
+                    }
+                    
+                    
+                })
+                .catch(function(err) {
+                    console.log(err);
+                });
+
+            //评价列表
+            let service = GetQueryString("service_id");
+            let page = GetQueryString("page");
+            let page_count = GetQueryString("page_count");
+            axios.get("http://139.196.101.133:8101/api/search/service_evaluate", {
+                    params: {
+                        // g: "ApiHome",
+                        // m: "circle",
+                        // a: "circle_detail",
+                        service_id: service,
+                        page: 1,
+                        page_count: 100,
+                    }
+                })
+                .then(function(res) {
+                    if (res.data.code == 200) {
+                        self.content = res.data.content;
+                    }
+                    // console.log(res);
+                })
+                .catch(function(err) {
+                    console.log(err);
+                });
+
+            // 判断滚动距离
+
+            $(window).scroll(function() {
+                var xqt = $('#xq').offset().top - 44;
+                // var xqImg = $('#xqImg').offset().top;
+                // console.log(1,xqImg);
+                if ($(window).scrollTop() >= 375) {
+                    $('#title').css('display', 'block').parents('.top').css('animation', 'tobar 1.5s').css('animation-fill-mode','forwards');
+                    $('.b1').css('display','none');
+                    $('.b2').css('display','block').css('margin-left','48px');
+                } else if ($(window).scrollTop() < 275) {
+                    $('#title').css('display', 'none').parents('.top').css('background','').css('animation', '');
+                    $('.b1').css('display','block');
+                    $('.b2').css('display','none');
+            
+                }
+              
+            });
+
+        },
+    })
+</script>
+
+</html>
